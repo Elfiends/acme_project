@@ -1,13 +1,19 @@
 from django import forms
 
 
-from .models import Birthday
+from .models import Birthday, Congratulation
 
 
 from django.core.exceptions import ValidationError
 
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
 
 BEATLES = {'Джон Леннон', 'Пол Маккартни', 'Джордж Харрисон', 'Ринго Старр'}
+
 
 class BirthdayForm(forms.ModelForm):
 
@@ -30,10 +36,23 @@ class BirthdayForm(forms.ModelForm):
                     'Мы тоже любим Битлз, но введите, пожалуйста, настоящее имя!'
                 )
         model = Birthday
-        fields = '__all__'
+        exclude = ('author',)
         widgets = {
             'birthday': forms.DateInput(
                 attrs={'type': 'date'},
                 format='%Y-%m-%d',
             )               
         }
+
+
+class CustomUserCreationForm(UserCreationForm):
+
+    class Meta(UserCreationForm.Meta):
+        model = User
+
+
+class CongratulationForm(forms.ModelForm):
+
+    class Meta:
+        model = Congratulation
+        fields = ('text',)
